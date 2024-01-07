@@ -164,7 +164,7 @@ export const deleteProduct = async (
   redirect("/dashboard/products");
 };
 
-// AUTH
+// AUTHORIZE
 
 export const authenticate = async (
   formData: Iterable<readonly [PropertyKey, any]>
