@@ -1,95 +1,12 @@
-import {
-  MdDashboard,
-  MdSupervisedUserCircle,
-  MdShoppingBag,
-  MdAttachMoney,
-  MdWork,
-  MdAnalytics,
-  MdPeople,
-  MdOutlineSettings,
-  MdHelpCenter,
-  MdLogout,
-} from "react-icons/md";
+import { MdLogout } from "react-icons/md";
 import styles from "./sidebar.module.scss";
 import MenuLink from "./menuLink/menuLink";
-import { ReactNode } from "react";
 import Image from "next/image";
-
-interface MenuItems {
-  title: string;
-  list: MenuLinkType[];
-}
-
-export type MenuLinkType = {
-  title: string;
-  path: string;
-  icon: ReactNode;
-};
-
-const MENU_ITEMS: MenuItems[] = [
-  {
-    title: "Pages",
-    list: [
-      {
-        title: "Dashboard",
-        path: "/dashboard",
-        icon: <MdDashboard />,
-      },
-      {
-        title: "Users",
-        path: "/dashboard/users",
-        icon: <MdSupervisedUserCircle />,
-      },
-      {
-        title: "Products",
-        path: "/dashboard/products",
-        icon: <MdShoppingBag />,
-      },
-      {
-        title: "Transactions",
-        path: "/dashboard/transactions",
-        icon: <MdAttachMoney />,
-      },
-    ],
-  },
-  {
-    title: "Analytics",
-    list: [
-      {
-        title: "Revenue",
-        path: "/dashboard/revenue",
-        icon: <MdWork />,
-      },
-      {
-        title: "Reports",
-        path: "/dashboard/reports",
-        icon: <MdAnalytics />,
-      },
-      {
-        title: "Teams",
-        path: "/dashboard/teams",
-        icon: <MdPeople />,
-      },
-    ],
-  },
-  {
-    title: "User",
-    list: [
-      {
-        title: "Settings",
-        path: "/dashboard/settings",
-        icon: <MdOutlineSettings />,
-      },
-      {
-        title: "Help",
-        path: "/dashboard/help",
-        icon: <MdHelpCenter />,
-      },
-    ],
-  },
-];
+import { MENU_ITEMS } from "@/app/data/menuItems";
+import { auth, signOut } from "@/app/auth";
 
 const Sidebar = () => {
+  const session = auth();
   return (
     <div className={styles.container}>
       <div className={styles.user}>
@@ -102,7 +19,9 @@ const Sidebar = () => {
           height="50"
         />
         <div className={styles.userDetail}>
-          <span className={styles.username}>John Doe</span>
+          <span className={styles.username}>
+            {session?.user?.name || "John Doe"}
+          </span>
           <span className={styles.userTitle}>Administrator</span>
         </div>
       </div>
@@ -116,10 +35,17 @@ const Sidebar = () => {
           </li>
         ))}
       </ul>
-      <button className={styles.logout}>
-        <MdLogout />
-        Logout
-      </button>
+      <form
+        action={async () => {
+          "use server";
+          await signOut();
+        }}
+      >
+        <button className={styles.logout}>
+          <MdLogout />
+          Logout
+        </button>
+      </form>
     </div>
   );
 };
